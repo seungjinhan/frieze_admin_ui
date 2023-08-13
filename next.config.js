@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  publicRuntimeConfig: {
+    APISERVER: process.env.APISERVER,
+    SERVERIPPORT: process.env.SERVERIPPORT,
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
