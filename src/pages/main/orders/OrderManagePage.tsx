@@ -88,11 +88,11 @@ export default function OrderManagePage() {
           <div className='text-black text-4xl font-bold leading-[38px] pt-[40px]'>
             {title}
           </div>
-          <div className='pt-[80px] w-[1417px]'>
-            <div className='flex flex-col'>
+          <div className='pt-[80px] w-[1417px] '>
+            <div className='flex flex-col '>
               <div className='flex'>
                 {headLabel("기간")}
-                <div className=' w-full h-[74px] text-black text-[17px] bg-[#F9F9F9] flex items-center pl-[40px] font-normal'>
+                <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
                   <div className='flex items-center'>
                     <DatePicker
                       className='border-[#D9D9D9] rounded-md'
@@ -124,7 +124,7 @@ export default function OrderManagePage() {
               </div>
               <div className='flex'>
                 {headLabel("이용 상태")}
-                <div className=' w-full h-[74px] text-black text-[17px] bg-[#F9F9F9] flex items-center pl-[40px] font-normal'>
+                <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
                   <select
                     id='countries'
                     className='text-sm text-gray-900 text-[17px] border border-gray-300 bg-gray-50 w-[182px] h-[56px] rounded-md'
@@ -138,7 +138,7 @@ export default function OrderManagePage() {
               </div>
               <div className='flex'>
                 {headLabel("선택")}
-                <div className=' w-full h-[74px] text-black text-[17px] bg-[#F9F9F9] flex items-center pl-[40px] font-normal'>
+                <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
                   <div className='flex'>
                     <div className='flex items-center mb-4'>
                       <div className=''>
