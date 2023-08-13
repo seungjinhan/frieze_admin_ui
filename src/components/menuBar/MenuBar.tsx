@@ -15,7 +15,8 @@ export default function MenuBar() {
       <div className='bg-[#F9F9F9] h-[113px] flex items-center text-2xl pl-[50px] text-neutral-800 font-bold leading-9'>
         고객관리
       </div>
-      {data.endsWith("UserManagePage") ? (
+      {data.endsWith("UserManagePage") ||
+      data.endsWith("UserManageDetailPage") ? (
         <div className='bg-white h-[118px] flex items-center pl-[50px] text-sky-500 text-2xl font-semibold leading-9'>
           전체고객관리
         </div>
