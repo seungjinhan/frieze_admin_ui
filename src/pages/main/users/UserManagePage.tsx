@@ -1,8 +1,57 @@
 import LayoutMain from "@/components/layout/LayoutMain";
-import TopPagePath from "@/components/topPagePath/TopPagePath";
+import axios from "axios";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
+export interface ListModel<T> {
+  page: number;
+  size: number;
+  totla: number;
+  totalPage: number;
+  data: T[];
+}
+
+export interface UserModel {
+  id: string;
+  created: Date;
+  updated: Date;
+  name: string;
+  email: string;
+  isAuth: boolean;
+  else01: string;
+  else02: string;
+}
 
 export default function UserManagePage() {
+  const [data, setData] = useState<ListModel<UserModel>>({
+    page: 0,
+    size: 10,
+    totla: 0,
+    totalPage: 0,
+    data: [],
+  });
+  const [pagingInfo, setPagingInfo] = useState({ size: 10, page: 0 });
+
+  useEffect(() => {
+    setPagingInfo({ size: 10, page: 0 });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(
+        `${publicRuntimeConfig.APISERVER}/c.user/list/${pagingInfo.page}/${pagingInfo.size}`
+      )
+      .then((d) => {
+        console.log(d.data.data);
+        if (d.data.ok === true) {
+          setData(d.data.data);
+        }
+      })
+      .catch((e) => {});
+  }, [pagingInfo, setPagingInfo]);
+
   return (
     <>
       <LayoutMain menuTitle='메인화면'>
@@ -102,45 +151,58 @@ export default function UserManagePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                    <th
-                      scope='row'
-                      className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
+                  {data.data.map((d: any, i: any) => (
+                    <tr
+                      key={i}
+                      className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'
                     >
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        123456
-                      </div>
-                    </th>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        KIM KYOOJIN
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        kj_kim@likealocal.co.kr
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        +82 10 0000 0000
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        2023.07.10
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='inline-flex items-center justify-center py-3 border rounded w-[149px] h-[56px] px-9 border-zinc-300'>
-                        <Link href={"/main/users/UserManageDetailPage"}>
-                          <div className='text-[20px] font-medium leading-loose text-neutral-400'>
-                            상세 정보
-                          </div>
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
+                      <th
+                        scope='row'
+                        className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
+                      >
+                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                          {d.id}
+                        </div>
+                      </th>
+                      <td className='px-6 py-4'>
+                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                          {d.name}
+                        </div>
+                      </td>
+                      <td className='px-6 py-4'>
+                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                          {d.email}
+                        </div>
+                      </td>
+                      <td className='px-6 py-4'>
+                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                          +821000000000
+                        </div>
+                      </td>
+                      <td className='px-6 py-4'>
+                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                          {d.created}
+                        </div>
+                      </td>
+                      <td className='px-6 py-4'>
+                        <div
+                          className='inline-flex items-center justify-center py-3 border rounded w-[149px] h-[56px] px-9 border-zinc-300'
+                          onClick={(e) => {
+                            localStorage.setItem(
+                              "userDetail",
+                              JSON.stringify(d)
+                            );
+                          }}
+                        >
+                          <Link href={"/main/users/UserManageDetailPage"}>
+                            <div className='text-[20px] font-medium leading-loose text-neutral-400'>
+                              상세 정보
+                            </div>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

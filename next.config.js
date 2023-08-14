@@ -2,7 +2,6 @@
 const nextConfig = {
   publicRuntimeConfig: {
     APISERVER: process.env.APISERVER,
-    SERVERIPPORT: process.env.SERVERIPPORT,
   },
 };
 

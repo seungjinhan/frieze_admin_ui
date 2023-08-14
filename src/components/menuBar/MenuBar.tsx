@@ -30,7 +30,8 @@ export default function MenuBar() {
       </div>
       <div className='bg-white py-[40px] flex flex-col pl-[50px] text-stone-500 text-2xl font-semibold leading-9'>
         <div className=''>
-          {data.endsWith("OrderManagePage?status=all") ? (
+          {data.endsWith("OrderManagePage?status=all") ||
+          data.endsWith("OrderManageDetailPage") ? (
             <div className='text-sky-500'>전체상품 리스트</div>
           ) : (
             <Link href={"/main/orders/OrderManagePage?status=all"}>

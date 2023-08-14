@@ -4,13 +4,65 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ListModel, UserModel } from "../users/UserManagePage";
+import axios from "axios";
+import getConfig from "next/config";
+import { ElseUtils } from "@/libs/else.utils";
+const { publicRuntimeConfig } = getConfig();
+
+export interface OrderModel {
+  id: string;
+  created: Date;
+  updated: Date;
+  userId: string;
+  startLng: string;
+  startLat: string;
+  startAddress: string;
+  goalLng: string;
+  goalLat: string;
+  goalAddress: string;
+  priceInfo: string;
+  status: string;
+  approvalDate: string;
+}
 
 export default function OrderManagePage() {
   const [startDate, setStartDate] = useState(new Date());
   const [endtDate, setEndDate] = useState(new Date());
   const [title, setTitle] = useState("");
 
+  // 주무리스트
+  const [order, setOrder] =
+    useState<ListModel<{ order: OrderModel; user: UserModel }>>();
+  const [orderPagingInfo, setOrderPagingInfo] = useState({ size: 10, page: 0 });
+
+  const [checkCBList, setCheckCBList] = useState([
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+  ]);
   const router = useRouter();
+
+  useEffect(() => {
+    axios
+      .get(
+        `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${orderPagingInfo.size}`
+      )
+      .then((d) => {
+        if (d.data.ok === true) {
+          setOrder(d.data.data);
+        }
+      })
+      .catch((e) => {});
+  }, [orderPagingInfo, setOrderPagingInfo]);
 
   useEffect(() => {
     if (router.isReady === false) return;
@@ -25,6 +77,7 @@ export default function OrderManagePage() {
       } else {
         setTitle("전체 상품 관리");
       }
+      setInit(true);
     } else {
       location.href = "/main/orders/OrderManagePage?status=all";
     }
@@ -36,6 +89,121 @@ export default function OrderManagePage() {
         {txt}
       </div>
     );
+  };
+
+  const cbBox = (index: number, title: string) => {
+    return (
+      <div className='ml-[32px]'>
+        <input
+          id={`cb${index}`}
+          type='checkbox'
+          value=''
+          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+          onChange={(e) => {
+            checkView(index, e.target.checked);
+          }}
+        />
+        <label
+          htmlFor={`cb${index}`}
+          className='ml-2 text-sm font-medium text-black text-[15px]'
+        >
+          {title}
+        </label>
+      </div>
+    );
+  };
+
+  const tableTh = (title: string, width: number, index: number) => {
+    return (
+      <>
+        {checkCBList[index] ? (
+          <th scope='col' className={`px-6 py-3 w-[${width}px]`}>
+            <div className='text-base font-bold leading-9 text-black'>
+              {title}
+            </div>
+          </th>
+        ) : (
+          ""
+        )}
+      </>
+    );
+  };
+
+  const tableTd = (title: string, index: number, d: any) => {
+    return (
+      <>
+        {checkCBList[index] ? (
+          <td className='px-6 py-4'>
+            <div
+              className='text-xl font-medium leading-loose text-neutral-400'
+              data-tooltip-target='tooltip-light'
+              data-tooltip-style='light'
+            >
+              {index === 5 ? (
+                <Link
+                  href={"/main/orders/OrderManageDetailPage"}
+                  onClick={(e) => {
+                    localStorage.setItem("orderuserinfo", JSON.stringify(d));
+                  }}
+                >
+                  <button className='w-[149px] h-[59px] font-normal bg-[#0085FE] text-white rounded-lg'>
+                    {title}
+                  </button>
+                </Link>
+              ) : (
+                title
+              )}
+            </div>
+          </td>
+        ) : (
+          ""
+        )}
+      </>
+    );
+  };
+  const setInit = (isCheck: boolean) => {
+    for (let index = 0; index < 11; index++) {
+      var cb = document.getElementById(`cb${index}`);
+      (cb as HTMLInputElement).checked = isCheck;
+    }
+    setCheckCBList([
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+      isCheck,
+    ]);
+  };
+  const checkView = (order: number, isCheck: boolean) => {
+    if (order === 0) {
+      setInit(isCheck);
+      return;
+    }
+
+    setCheckCBList([...checkCBList, (checkCBList[order] = isCheck)]);
+
+    let allCheck = true;
+    for (let index = 1; index < 9; index++) {
+      var cb = document.getElementById(`cb${index}`);
+      if ((cb as HTMLInputElement).checked === false) {
+        allCheck = false;
+      }
+    }
+
+    var cbAll = document.getElementById("cb0");
+    if (allCheck) {
+      (cbAll as HTMLInputElement)!.checked = true;
+      setCheckCBList([...checkCBList, (checkCBList[0] = true)]);
+    } else {
+      (cbAll as HTMLInputElement)!.checked = false;
+      setCheckCBList([...checkCBList, (checkCBList[0] = false)]);
+    }
   };
 
   return (
@@ -88,7 +256,7 @@ export default function OrderManagePage() {
           <div className='text-black text-4xl font-bold leading-[38px] pt-[40px]'>
             {title}
           </div>
-          <div className='pt-[80px] w-[1417px] '>
+          <div className='pt-[80px] w-[1420px] '>
             <div className='flex flex-col '>
               <div className='flex'>
                 {headLabel("기간")}
@@ -141,132 +309,17 @@ export default function OrderManagePage() {
                 <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
                   <div className='flex'>
                     <div className='flex items-center mb-4'>
-                      <div className=''>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-[#0085FE] text-sm font-medium text-[15px]'
-                        >
-                          전체
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          주문번호
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          고객명
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          출발지
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          도착지
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          이메일
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          전화번호
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          결제금액
-                        </label>
-                      </div>
-                      <div className='ml-[32px]'>
-                        <input
-                          id='default-checkbox'
-                          type='checkbox'
-                          value=''
-                          className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                        />
-                        <label
-                          htmlFor='default-checkbox'
-                          className='ml-2 text-sm font-medium text-black text-[15px]'
-                        >
-                          결제승인일자
-                        </label>
-                      </div>
+                      <div className=''>{cbBox(0, "전체")}</div>
+                      <div className=''>{cbBox(1, "주문번호")}</div>
+                      <div className=''>{cbBox(2, "고객명")}</div>
+                      <div className=''>{cbBox(3, "출발지")}</div>
+                      <div className=''>{cbBox(4, "도착지")}</div>
+                      <div className=''>{cbBox(5, "이용상태")}</div>
+                      <div className=''>{cbBox(6, "이메일")}</div>
+                      <div className=''>{cbBox(7, "전화번호")}</div>
+                      <div className=''>{cbBox(8, "결제금액")}</div>
+                      <div className=''>{cbBox(9, "결제금액")}</div>
+                      <div className=''>{cbBox(10, "결제승인일자")}</div>
                     </div>
                   </div>
                 </div>
@@ -278,7 +331,7 @@ export default function OrderManagePage() {
               목록 (총{" "}
             </span>
             <span className='text-2xl font-medium leading-9 text-sky-500'>
-              10
+              {order?.data.length}
             </span>
             <span className='text-2xl font-medium leading-9 text-black'>
               명)
@@ -289,254 +342,43 @@ export default function OrderManagePage() {
               <table className='text-sm text-left text-gray-500 dark:text-gray-400'>
                 <thead className='h-full text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                   <tr>
-                    <th scope='col' className='px-6 py-3 w-[210px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        주문번호
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[210px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        고객명
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[329px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        출발지
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[255px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        도착지
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[210px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        이용상태
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[210px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        이메일
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[210px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        전화번호
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[210px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        결제금액
-                      </div>
-                    </th>
-                    <th scope='col' className='px-6 py-3 w-[210px]'>
-                      <div className='text-base font-bold leading-9 text-black'>
-                        결제승인일자
-                      </div>
-                    </th>
+                    {tableTh("주문번호", 210, 1)}
+                    {tableTh("고객명", 210, 2)}
+                    {tableTh("출발지", 210, 3)}
+                    {tableTh("도착지", 210, 4)}
+                    {tableTh("이용상태", 210, 5)}
+                    {tableTh("이메일", 210, 6)}
+                    {tableTh("전화번호", 210, 7)}
+                    {tableTh("결제금액", 210, 8)}
+                    {tableTh("결제승인일자", 210, 9)}
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                    <th
-                      scope='row'
-                      className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
-                    >
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        P188F7B4
-                      </div>
-                    </th>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        KIM KYOOJIN
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        Incheon International Airport Terminal 1
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        COEX
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>결제완료</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>kj_kim@likealocal.co.kr</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>+82 10 0000 0000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>USD 100.000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>2023.09.06 22:22</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                    <th
-                      scope='row'
-                      className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
-                    >
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        P188F7B4
-                      </div>
-                    </th>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        KIM KYOOJIN
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        Incheon International Airport Terminal 1
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        COEX
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>결제완료</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>kj_kim@likealocal.co.kr</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>+82 10 0000 0000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>USD 100.000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>2023.09.06 22:22</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                    <th
-                      scope='row'
-                      className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
-                    >
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        P188F7B4
-                      </div>
-                    </th>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        KIM KYOOJIN
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        Incheon International Airport Terminal 1
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        COEX
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>결제완료</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>kj_kim@likealocal.co.kr</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>+82 10 0000 0000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>USD 100.000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>2023.09.06 22:22</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                    <th
-                      scope='row'
-                      className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
-                    >
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        P188F7B4
-                      </div>
-                    </th>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        KIM KYOOJIN
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        Incheon International Airport Terminal 1
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        COEX
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>결제완료</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>kj_kim@likealocal.co.kr</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>+82 10 0000 0000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>USD 100.000</button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4'>
-                      <div className='text-xl font-medium leading-loose text-neutral-400'>
-                        <button>2023.09.06 22:22</button>
-                      </div>
-                    </td>
-                  </tr>
+                  {order?.data.map((d, i) => {
+                    return (
+                      <>
+                        <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+                          {tableTd(
+                            ElseUtils.stringCut(d.order.id, 50, "..."),
+                            1,
+                            d
+                          )}
+                          {tableTd(d.user.name, 2, d)}
+                          {tableTd(d.order.startAddress, 3, d)}
+                          {tableTd(d.order.goalAddress, 4, d)}
+                          {tableTd(d.order.status, 5, d)}
+                          {tableTd(d.user.email, 6, d)}
+                          {tableTd("+82 10 0000 0000", 7, d)}
+                          {tableTd(
+                            `USD ${JSON.parse(d.order.priceInfo).lastPrice}`,
+                            8,
+                            d
+                          )}
+                          {tableTd("2023.09.06 22:22", 9, d)}
+                        </tr>
+                      </>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

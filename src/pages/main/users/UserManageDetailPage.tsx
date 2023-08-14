@@ -1,7 +1,55 @@
 import LayoutMain from "@/components/layout/LayoutMain";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { ListModel, UserModel } from "./UserManagePage";
+import axios from "axios";
+import { OrderModel } from "../orders/OrderManagePage";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 export default function UserManageDetailPage() {
+  const router = useRouter();
+  const [data, setData] = useState<UserModel>();
+
+  // 주무리스트
+  const [order, setOrder] = useState<ListModel<OrderModel>>();
+  const [orderPagingInfo, setOrderPagingInfo] = useState({ size: 10, page: 0 });
+
+  useEffect(() => {
+    if (data === undefined) return;
+
+    console.log("DDD");
+    axios
+      .get(
+        `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${
+          orderPagingInfo.size
+        }/${data!.id}`
+      )
+      .then((d) => {
+        console.log(d.data.data);
+        if (d.data.ok === true) {
+          setOrder(d.data.data);
+        }
+      })
+      .catch((e) => {});
+  }, [orderPagingInfo, setOrderPagingInfo]);
+
+  useEffect(() => {
+    if (router.isReady === false) return;
+
+    const user = localStorage.getItem("userDetail");
+    if (user === null || user === undefined) {
+      return;
+    }
+    const userJson = JSON.parse(user);
+    setData(userJson);
+    console.log(userJson);
+    setTimeout(() => {
+      setOrderPagingInfo({ size: 10, page: 0 });
+    }, 300);
+  }, [router]);
+
   const label = (txt: string) => {
     return (
       <td className='pl-[40px] w-[210px] bg-[#F9F9F9] text-black text-[17px] border-[1px] border-[#D7D7D7]'>
@@ -92,111 +140,73 @@ export default function UserManageDetailPage() {
             <div className='text-2xl font-normal leading-9 text-black'>
               고객정보
             </div>
-            <div className='verflow-auto'>
-              <table className='w-[1417px] h-[220px] border-[1px] border-[#D7D7D7] mt-[20px]'>
-                <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                  {label("최초 접속일")}
-                  {value("2023.08.31")}
-                  {label("최근 접속일")}
-                  {value("2023.08.31")}
-                </tr>
-                <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                  {label("고객번호")}
-                  {value("12341234123423")}
-                  {label("고객명")}
-                  {value("KIMKYOOJIN")}
-                </tr>
-                <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                  {label("이메일")}
-                  {value("kj_kim@likealocal.co.kr")}
-                  {label("전화번호")}
-                  {value("+821000000000")}
-                </tr>
-              </table>
-              <div className='text-2xl font-normal leading-9 text-black mt-[60px]'>
-                구매정보(1개)
+            {data === undefined ? (
+              ""
+            ) : (
+              <div className='verflow-auto'>
+                <table className='w-[1417px] h-[220px] border-[1px] border-[#D7D7D7] mt-[20px]'>
+                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                    {label("최초 접속일")}
+                    {value(data.created.toString())}
+                    {label("최근 접속일")}
+                    {value("2023.08.31")}
+                  </tr>
+                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                    {label("고객번호")}
+                    {value(data.id)}
+                    {label("고객명")}
+                    {value(data.name)}
+                  </tr>
+                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                    {label("이메일")}
+                    {value(data.email)}
+                    {label("전화번호")}
+                    {value("+821000000000")}
+                  </tr>
+                </table>
+                <div className='text-2xl font-normal leading-9 text-black mt-[60px]'>
+                  구매정보({order?.data.length}개)
+                </div>
+                <div className=''>
+                  {order !== undefined
+                    ? order.data.map((d, i) => {
+                        return (
+                          <>
+                            <table className='w-[1417px] h-[220px] border-[1px] border-[#D7D7D7] mt-[20px]'>
+                              <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                                {label("주문번호")}
+                                {value(d.id)}
+                                {label("상품")}
+                                {value("즉시 호출 (Default)")}
+                              </tr>
+                              <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                                {label("출발지")}
+                                {value(d.startAddress)}
+                                {label("도착지")}
+                                {value(d.goalAddress)}
+                              </tr>
+                              <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                                {label("결제 승인일자")}
+                                {value("2023.09.06 22:22")}
+                                {label("이용 상태")}
+                                {value(d.status)}
+                              </tr>
+                              <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                                {label("결제 금액")}
+                                {value(
+                                  `USD ${JSON.parse(d.priceInfo).lastPrice}`
+                                )}
+                                {label("결제 수단")}
+                                {value("NICEPAYMENTS")}
+                              </tr>
+                            </table>
+                          </>
+                        );
+                      })
+                    : ""}
+                </div>
               </div>
-              <div className=''>
-                <table className='w-[1417px] h-[220px] border-[1px] border-[#D7D7D7] mt-[20px]'>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("주문번호")}
-                    {value("P188F7B4")}
-                    {label("상품")}
-                    {value("즉시 호출 (Default)")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("출발지")}
-                    {value("Incheon International Airport Terminal 1")}
-                    {label("도착지")}
-                    {value("Coex")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("결제 승인일자")}
-                    {value("2023.09.06 22:22")}
-                    {label("이용 상태")}
-                    {value("결제완료 / 이용완료 / 이용취소")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("결제 금액")}
-                    {value("USD 100.000")}
-                    {label("결제 수단")}
-                    {value("NICEPAYMENTS")}
-                  </tr>
-                </table>
-                <table className='w-[1417px] h-[220px] border-[1px] border-[#D7D7D7] mt-[20px]'>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("주문번호")}
-                    {value("P188F7B4")}
-                    {label("상품")}
-                    {value("즉시 호출 (Default)")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("출발지")}
-                    {value("Incheon International Airport Terminal 1")}
-                    {label("도착지")}
-                    {value("Coex")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("결제 승인일자")}
-                    {value("2023.09.06 22:22")}
-                    {label("이용 상태")}
-                    {value("결제완료 / 이용완료 / 이용취소")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("결제 금액")}
-                    {value("USD 100.000")}
-                    {label("결제 수단")}
-                    {value("NICEPAYMENTS")}
-                  </tr>
-                </table>
-                <table className='w-[1417px] h-[220px] border-[1px] border-[#D7D7D7] mt-[20px]'>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("주문번호")}
-                    {value("P188F7B4")}
-                    {label("상품")}
-                    {value("즉시 호출 (Default)")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("출발지")}
-                    {value("Incheon International Airport Terminal 1")}
-                    {label("도착지")}
-                    {value("Coex")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("결제 승인일자")}
-                    {value("2023.09.06 22:22")}
-                    {label("이용 상태")}
-                    {value("결제완료 / 이용완료 / 이용취소")}
-                  </tr>
-                  <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
-                    {label("결제 금액")}
-                    {value("USD 100.000")}
-                    {label("결제 수단")}
-                    {value("NICEPAYMENTS")}
-                  </tr>
-                </table>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </LayoutMain>
