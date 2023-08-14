@@ -21,13 +21,13 @@ export default function LoginPage() {
                 type='password'
               />
 
-              <div className='mt-[60px] mb-[166px] inline-flex items-center justify-center py-4 rounded w-[524px] h-[56px] bg-sky-500'>
-                <button
-                  className='text-base font-medium leading-normal text-white'
-                  onClick={(e) => {
-                    location.href = "/main/users/UserManagePage";
-                  }}
-                >
+              <div
+                className='mt-[60px] mb-[166px] inline-flex items-center justify-center py-4 rounded w-[524px] h-[56px] bg-sky-500'
+                onClick={(e) => {
+                  location.href = "/main/users/UserManagePage";
+                }}
+              >
+                <button className='text-base font-medium leading-normal text-white'>
                   로그인
                 </button>
               </div>
