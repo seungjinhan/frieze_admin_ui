@@ -8,7 +8,7 @@ const { publicRuntimeConfig } = getConfig();
 export interface ListModel<T> {
   page: number;
   size: number;
-  totla: number;
+  total: number;
   totalPage: number;
   data: T[];
 }
@@ -19,16 +19,18 @@ export interface UserModel {
   updated: Date;
   name: string;
   email: string;
+  phone: string;
   isAuth: boolean;
   else01: string;
   else02: string;
 }
 
 export default function UserManagePage() {
+  const [manager, setManager] = useState();
   const [data, setData] = useState<ListModel<UserModel>>({
     page: 0,
     size: 10,
-    totla: 0,
+    total: 0,
     totalPage: 0,
     data: [],
   });
@@ -54,7 +56,7 @@ export default function UserManagePage() {
 
   return (
     <>
-      <LayoutMain menuTitle='메인화면'>
+      <LayoutMain menuTitle='메인화면' setManager={setManager}>
         <div className='pl-[40px] w-full'>
           <div className=''>
             <div className='flex items-center mt-[40px]'>
@@ -107,7 +109,7 @@ export default function UserManagePage() {
               목록 (총{" "}
             </span>
             <span className='text-2xl font-medium leading-9 text-sky-500'>
-              10
+              {data.total}
             </span>
             <span className='text-2xl font-medium leading-9 text-black'>
               명)
@@ -176,7 +178,7 @@ export default function UserManagePage() {
                       </td>
                       <td className='px-6 py-4'>
                         <div className='text-xl font-medium leading-loose text-neutral-400'>
-                          +821000000000
+                          +{d.phone}
                         </div>
                       </td>
                       <td className='px-6 py-4'>

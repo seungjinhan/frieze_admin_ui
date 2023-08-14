@@ -24,12 +24,18 @@ export interface OrderModel {
   priceInfo: string;
   status: string;
   approvalDate: string;
+  paymentDate: string;
+  canceltDate: string;
+  dispatchDate: string;
+  doneDate: string;
 }
 
 export default function OrderManagePage() {
   const [startDate, setStartDate] = useState(new Date());
   const [endtDate, setEndDate] = useState(new Date());
   const [title, setTitle] = useState("");
+
+  const [manager, setManager] = useState();
 
   // 주무리스트
   const [order, setOrder] =
@@ -59,10 +65,15 @@ export default function OrderManagePage() {
       .then((d) => {
         if (d.data.ok === true) {
           setOrder(d.data.data);
+
+          // 데이터를 로딩 후 초기화 한다.
+          setInit(true);
         }
       })
       .catch((e) => {});
   }, [orderPagingInfo, setOrderPagingInfo]);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (router.isReady === false) return;
@@ -77,7 +88,6 @@ export default function OrderManagePage() {
       } else {
         setTitle("전체 상품 관리");
       }
-      setInit(true);
     } else {
       location.href = "/main/orders/OrderManagePage?status=all";
     }
@@ -163,7 +173,7 @@ export default function OrderManagePage() {
   };
   const setInit = (isCheck: boolean) => {
     for (let index = 0; index < 11; index++) {
-      var cb = document.getElementById(`cb${index}`);
+      var cb = document.getElementById("cb" + index);
       (cb as HTMLInputElement).checked = isCheck;
     }
     setCheckCBList([
@@ -208,7 +218,7 @@ export default function OrderManagePage() {
 
   return (
     <>
-      <LayoutMain menuTitle='메인화면'>
+      <LayoutMain menuTitle='메인화면' setManager={setManager}>
         <div className='pl-[40px] w-full'>
           <div className=''>
             <div className='flex items-center mt-[40px]'>
@@ -356,27 +366,28 @@ export default function OrderManagePage() {
                 <tbody>
                   {order?.data.map((d, i) => {
                     return (
-                      <>
-                        <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                          {tableTd(
-                            ElseUtils.stringCut(d.order.id, 50, "..."),
-                            1,
-                            d
-                          )}
-                          {tableTd(d.user.name, 2, d)}
-                          {tableTd(d.order.startAddress, 3, d)}
-                          {tableTd(d.order.goalAddress, 4, d)}
-                          {tableTd(d.order.status, 5, d)}
-                          {tableTd(d.user.email, 6, d)}
-                          {tableTd("+82 10 0000 0000", 7, d)}
-                          {tableTd(
-                            `USD ${JSON.parse(d.order.priceInfo).lastPrice}`,
-                            8,
-                            d
-                          )}
-                          {tableTd("2023.09.06 22:22", 9, d)}
-                        </tr>
-                      </>
+                      <tr
+                        className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'
+                        key={i}
+                      >
+                        {tableTd(
+                          ElseUtils.stringCut(d.order.id, 50, "..."),
+                          1,
+                          d
+                        )}
+                        {tableTd(d.user.name, 2, d)}
+                        {tableTd(d.order.startAddress, 3, d)}
+                        {tableTd(d.order.goalAddress, 4, d)}
+                        {tableTd(d.order.status, 5, d)}
+                        {tableTd(d.user.email, 6, d)}
+                        {tableTd(`+${d.user.phone}`, 7, d)}
+                        {tableTd(
+                          `USD ${JSON.parse(d.order.priceInfo).lastPrice}`,
+                          8,
+                          d
+                        )}
+                        {tableTd(d.order.paymentDate, 9, d)}
+                      </tr>
                     );
                   })}
                 </tbody>

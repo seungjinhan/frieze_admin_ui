@@ -5,9 +5,22 @@ import { UserModel } from "../users/UserManagePage";
 import { OrderModel } from "./OrderManagePage";
 import axios from "axios";
 import getConfig from "next/config";
+import { ElseUtils } from "@/libs/else.utils";
 const { publicRuntimeConfig } = getConfig();
+export interface ManagerModel {
+  id: string;
+  created: Date;
+  updated: Date;
+  name: string;
+  email: string;
+  password: string;
+  else01: string;
+  else02: string;
+  lastLoginDate: string;
+}
 
 export default function UserManageDetailPage() {
+  const [manager, setManager] = useState<ManagerModel>();
   const [data, setData] = useState<{ order: OrderModel; user: UserModel }>();
 
   const [cancelInfo, setCancelInfo] = useState({
@@ -25,10 +38,15 @@ export default function UserManageDetailPage() {
     setData(orderUserJson);
   }, []);
 
+  useEffect(() => {
+    console.log(manager);
+  }, [manager]);
+
   const runCancel = () => {
     axios
       .post(`${publicRuntimeConfig.APISERVER}/order/payment/admin/cancel`, {
         id: data!.order.id,
+        managerId: manager!.id,
         ...cancelInfo,
       })
       .then((d) => {
@@ -62,7 +80,7 @@ export default function UserManageDetailPage() {
   if (data === undefined) return;
   return (
     <>
-      <LayoutMain menuTitle='메인화면'>
+      <LayoutMain menuTitle='메인화면' setManager={setManager}>
         <div className='pl-[40px] bg-[#EBEBEB]'>
           <div className=''>
             <div className='flex items-center mt-[40px]'>
@@ -129,31 +147,42 @@ export default function UserManageDetailPage() {
           </div>
           <div className='text-black text-4xl font-bold leading-[38px] pt-[40px]'>
             {data?.order.status} 상세정보
+            {data.order.status === "CANCEL" ? (
+              <> [취소시간 : {data.order.canceltDate}]</>
+            ) : (
+              <>[완료시간 : {data.order.doneDate}]</>
+            )}
           </div>
           <div className='flex w-[1406px]'>
             <div className='flex flex-col text-black text-[24px] mt-[40px] font-normal '>
               <div className='flex '>
                 <div className='pr-[5px]'>마지막 수정자 :</div>
-                <div className='font-bold pl-[5px]'>jenny</div>
+                <div className='font-bold pl-[5px]'>{manager?.name}</div>
               </div>
               <div className='flex mt-[5px]'>
-                <div className='pr-[5px]'>등록일 :</div>
-                <div className='font-bold pl-[5px]'>2023.07.10, 12:40:41</div>
+                <div className='pr-[5px] w-[80px]'>등록일 :</div>
+                <div className='font-bold pl-[0px] w-[220px]'>
+                  {ElseUtils.changeDate(data.order.created.toString())}
+                </div>
               </div>
             </div>
-            <div className='flex items-end justify-end w-full'>
-              <button
-                className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg text-[24px] text-black'
-                onClick={(e) => {
-                  setIsShowModal(true);
-                }}
-              >
-                취소처리
-              </button>
-              <button className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg ml-[27px] text-[24px] text-black'>
-                수정
-              </button>
-            </div>
+            {data.order.status === "CANCEL" || data.order.status === "DONE" ? (
+              ""
+            ) : (
+              <div className='flex items-end justify-end w-full'>
+                <button
+                  className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg text-[24px] text-black'
+                  onClick={(e) => {
+                    setIsShowModal(true);
+                  }}
+                >
+                  취소처리
+                </button>
+                <button className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg ml-[27px] text-[24px] text-black'>
+                  수정
+                </button>
+              </div>
+            )}
           </div>
           <div className='mt-[40px]'>
             <svg
@@ -191,7 +220,7 @@ export default function UserManageDetailPage() {
                 </tr>
                 <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
                   {label("결제 승인일자")}
-                  {value("2023.09.06 22:22")}
+                  {value(ElseUtils.changeDate(data!.order.approvalDate))}
                   {label("이용 상태")}
                   {value(data!.order.status)}
                 </tr>
@@ -210,9 +239,9 @@ export default function UserManageDetailPage() {
               <table className='w-[1417px] h-[220px] border-[1px] border-[#D7D7D7] mt-[20px]'>
                 <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
                   {label("최초 접속일")}
-                  {value(data!.user.created.toString())}
+                  {value(ElseUtils.changeDate(data!.user.created.toString()))}
                   {label("최근 접속일")}
-                  {value("2023.08.31")}
+                  {manager === undefined ? "" : value(manager!.lastLoginDate)}
                 </tr>
                 <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
                   {label("고객번호")}

@@ -10,6 +10,7 @@ const { publicRuntimeConfig } = getConfig();
 
 export default function UserManageDetailPage() {
   const router = useRouter();
+  const [manager, setManager] = useState();
   const [data, setData] = useState<UserModel>();
 
   // 주무리스트
@@ -69,7 +70,7 @@ export default function UserManageDetailPage() {
   };
   return (
     <>
-      <LayoutMain menuTitle='메인화면'>
+      <LayoutMain menuTitle='메인화면' setManager={setManager}>
         <div className='pl-[40px] bg-[#EBEBEB]'>
           <div className=''>
             <div className='flex items-center mt-[40px]'>
@@ -161,7 +162,7 @@ export default function UserManageDetailPage() {
                     {label("이메일")}
                     {value(data.email)}
                     {label("전화번호")}
-                    {value("+821000000000")}
+                    {value(`+${data.phone}`)}
                   </tr>
                 </table>
                 <div className='text-2xl font-normal leading-9 text-black mt-[60px]'>
@@ -187,7 +188,7 @@ export default function UserManageDetailPage() {
                               </tr>
                               <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
                                 {label("결제 승인일자")}
-                                {value("2023.09.06 22:22")}
+                                {value(d.paymentDate)}
                                 {label("이용 상태")}
                                 {value(d.status)}
                               </tr>
