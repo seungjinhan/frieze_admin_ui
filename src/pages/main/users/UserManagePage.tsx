@@ -3,6 +3,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import getConfig from "next/config";
+import { ElseUtils } from "@/libs/else.utils";
 const { publicRuntimeConfig } = getConfig();
 
 export interface ListModel<T> {
@@ -183,7 +184,7 @@ export default function UserManagePage() {
                       </td>
                       <td className='px-6 py-4'>
                         <div className='text-xl font-medium leading-loose text-neutral-400'>
-                          {d.created}
+                          {ElseUtils.changeDate(d.created)}
                         </div>
                       </td>
                       <td className='px-6 py-4'>

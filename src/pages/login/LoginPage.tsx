@@ -1,17 +1,29 @@
 import axios from "axios";
 import "../../app/globals.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import getConfig from "next/config";
 import { SecurityUtils } from "@/libs/security.utils";
+import Logo from "@/components/logo/Logo";
+import { ElseUtils } from "@/libs/else.utils";
 const { publicRuntimeConfig } = getConfig();
 
 export default function LoginPage() {
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
+
+  useEffect(() => {
+    // 로그인체크
+    ElseUtils.checkLoginUser();
+  }, []);
+
   return (
     <>
-      <div className='flex bg-[#EBEBEB]'>
-        <div className='h-[151px] bg-[#f4f4f4]'></div>
+      <div className='bg-[#EBEBEB] w-full'>
+        <div className='h-[151px] bg-[#f4f4f4] w-full'>
+          <div className='pt-[20px]'>
+            <Logo />
+          </div>
+        </div>
         <div className='flex flex-col items-center justify-center w-full h-screen'>
           <div className='w-[640px] h-[594px] bg-[#FFFFFF] flex justify-center flex-col items-center'>
             <div className='text-3xl font-bold leading-10 text-neutral-800 mt-[84px]'>
@@ -47,7 +59,6 @@ export default function LoginPage() {
                       loginInfo
                     )
                     .then((e) => {
-                      console.log(e.data.data);
                       localStorage.setItem(
                         "managerinfomation",
                         SecurityUtils.encryptText(JSON.stringify(e.data.data))

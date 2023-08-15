@@ -8,6 +8,7 @@ import { ListModel, UserModel } from "../users/UserManagePage";
 import axios from "axios";
 import getConfig from "next/config";
 import { ElseUtils } from "@/libs/else.utils";
+import moment from "moment";
 const { publicRuntimeConfig } = getConfig();
 
 export interface OrderModel {
@@ -34,7 +35,10 @@ export default function OrderManagePage() {
   const [startDate, setStartDate] = useState(new Date());
   const [endtDate, setEndDate] = useState(new Date());
   const [title, setTitle] = useState("");
+  const [searchType, setSearchType] = useState(-1);
+  const [listFilter, setListFilter] = useState("ALL");
 
+  const [listCount, setListCount] = useState(0);
   const [manager, setManager] = useState();
 
   // 주무리스트
@@ -58,22 +62,37 @@ export default function OrderManagePage() {
   const router = useRouter();
 
   useEffect(() => {
+    search(-1);
+    searchRun();
+  }, [orderPagingInfo, setOrderPagingInfo]);
+
+  useEffect(() => {}, []);
+
+  const searchRun = () => {
+    const url = `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${orderPagingInfo.size}?type=${searchType}&s=${startDate}&g=${endtDate}`;
     axios
-      .get(
-        `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${orderPagingInfo.size}`
-      )
+      .get(url)
       .then((d) => {
         if (d.data.ok === true) {
           setOrder(d.data.data);
-
           // 데이터를 로딩 후 초기화 한다.
           setInit(true);
         }
       })
       .catch((e) => {});
-  }, [orderPagingInfo, setOrderPagingInfo]);
+  };
 
-  useEffect(() => {}, []);
+  const search = (type: number) => {
+    setSearchType(type);
+    let newDate;
+    let endD;
+    if (type >= 0) {
+      newDate = moment().subtract(type, "days").format("YYYY-MM-DD");
+      setStartDate(new Date(newDate));
+      endD = moment().format("YYYY-MM-DD");
+      setEndDate(new Date(endD));
+    }
+  };
 
   useEffect(() => {
     if (router.isReady === false) return;
@@ -273,29 +292,82 @@ export default function OrderManagePage() {
                 <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
                   <div className='flex items-center'>
                     <DatePicker
-                      className='border-[#D9D9D9] rounded-md'
+                      disabled={searchType === -1 ? true : false}
+                      className={
+                        searchType === -1
+                          ? "bg-gray-500  rounded-md"
+                          : `border-[#D9D9D9] rounded-md`
+                      }
                       dateFormat='yyyy-MM-dd'
                       selected={startDate}
                       onChange={(date: any) => setStartDate(date)}
                     />
                     <div className='px-[18px]'>~</div>
                     <DatePicker
-                      className='border-[#D9D9D9] rounded-md'
+                      disabled={searchType === -1 ? true : false}
+                      className={
+                        searchType === -1
+                          ? "bg-gray-500  rounded-md"
+                          : `border-[#D9D9D9] rounded-md`
+                      }
                       dateFormat='yyyy-MM-dd'
                       selected={endtDate}
                       onChange={(date: any) => setStartDate(date)}
                     />
-                    <button className='border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center'>
+                    <button
+                      className={
+                        searchType === 0
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                      }
+                      onClick={(e) => {
+                        search(0);
+                      }}
+                    >
                       오늘
                     </button>
-                    <button className='border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center'>
+                    <button
+                      className={
+                        searchType === 3
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                      }
+                      onClick={(e) => {
+                        search(3);
+                      }}
+                    >
                       3일
                     </button>
-                    <button className='border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center'>
+                    <button
+                      className={
+                        searchType === 7
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                      }
+                      onClick={(e) => {
+                        search(7);
+                      }}
+                    >
                       7일
                     </button>
-                    <button className='border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center'>
+                    <button
+                      className={
+                        searchType === -1
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                      }
+                      onClick={(e) => {
+                        search(-1);
+                      }}
+                    >
                       전체
+                    </button>
+
+                    <button
+                      className='border-[#0085FE] bg-[#0f1c29] rounded-md w-44 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center'
+                      onClick={searchRun}
+                    >
+                      검색
                     </button>
                   </div>
                 </div>
@@ -306,11 +378,15 @@ export default function OrderManagePage() {
                   <select
                     id='countries'
                     className='text-sm text-gray-900 text-[17px] border border-gray-300 bg-gray-50 w-[182px] h-[56px] rounded-md'
-                    defaultValue='payment'
+                    defaultValue='ALL'
+                    onChange={(e) => {
+                      setListFilter(e.target.value);
+                    }}
                   >
-                    <option value='payment'>결제완료</option>
-                    <option value='done'>이용완료</option>
-                    <option value='cancel'>이용취소</option>
+                    <option value='ALL'>전체</option>
+                    <option value='PAYMENT'>결제완료</option>
+                    <option value='DONE'>이용완료</option>
+                    <option value='CANCEL'>이용취소</option>
                   </select>
                 </div>
               </div>
@@ -365,6 +441,11 @@ export default function OrderManagePage() {
                 </thead>
                 <tbody>
                   {order?.data.map((d, i) => {
+                    if (listFilter !== "ALL") {
+                      if (listFilter !== d.order.status) {
+                        return;
+                      }
+                    }
                     return (
                       <tr
                         className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'

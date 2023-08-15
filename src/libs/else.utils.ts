@@ -1,3 +1,5 @@
+import { SecurityUtils } from "../libs/security.utils";
+
 export const ElseUtils = {
   isValidEmail: (email: string) => {
     var regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -46,5 +48,24 @@ export const ElseUtils = {
 
     let formatted = `${year}-${month}-${day} ${hours}:${minutes}`;
     return formatted;
+  },
+  checkLoginUserAndGetUser: (isNotMove = false) => {
+    const user = localStorage.getItem("managerinfomation");
+    if (user === undefined || user === null) {
+      location.href = "login/LoginPage";
+      return;
+    }
+    try {
+      const userJson = JSON.parse(SecurityUtils.decryptText(user));
+      if (isNotMove === false) {
+        location.href = "main/users/UserManagePage";
+        return;
+      }
+      return userJson;
+    } catch (err) {
+      localStorage.removeItem("managerinfomation");
+      location.href = "login/LoginPage";
+      return;
+    }
   },
 };

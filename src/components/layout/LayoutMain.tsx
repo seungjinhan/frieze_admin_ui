@@ -4,6 +4,9 @@ import MenuBar from "../menuBar/MenuBar";
 import "../../app/globals.css";
 import "flowbite";
 import { SecurityUtils } from "@/libs/security.utils";
+import Image from "next/image";
+import Logo from "../logo/Logo";
+import { ElseUtils } from "@/libs/else.utils";
 
 interface LayoutMainProps {
   children: any;
@@ -18,15 +21,9 @@ const LayoutMain = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const manager = localStorage.getItem("managerinfomation");
-    if (manager === undefined || manager === null) {
-      alert("부적절한 접근");
-      location.href = "/";
-      return;
-    }
-    const managerJson = JSON.parse(SecurityUtils.decryptText(manager));
-    serManager(managerJson);
-
+    const manager = ElseUtils.checkLoginUserAndGetUser(true);
+    if (manager === undefined) return;
+    serManager(manager);
     setLoading(false);
   }, []);
 
@@ -41,7 +38,11 @@ const LayoutMain = ({
         ) : (
           <>
             <div className='flex flex-col h-full'>
-              <div className='bg-zinc-300 h-[181px]'></div>
+              <div className='bg-zinc-300 h-[181px]'>
+                <div className='mt-[40px]'></div>
+                <Logo />
+                <div className='mt-[44px]'></div>
+              </div>
               <div className='flex h-screen bg-[#EBEBEB]'>
                 <div className='w-[320px] h-full bg-[#FFFFFF]'>
                   <MenuBar />
