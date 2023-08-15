@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     // 로그인체크
-    ElseUtils.checkLoginUser();
+    ElseUtils.checkLoginUserAndGetUser();
   }, []);
 
   return (
