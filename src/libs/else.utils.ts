@@ -49,10 +49,12 @@ export const ElseUtils = {
     let formatted = `${year}-${month}-${day} ${hours}:${minutes}`;
     return formatted;
   },
-  checkLoginUserAndGetUser: (isNotMove = false) => {
+  checkLoginUserAndGetUser: (isNotMove = false, isLoginPage = false) => {
     const user = localStorage.getItem("managerinfomation");
     if (user === undefined || user === null) {
-      location.href = "/login/LoginPage";
+      if (isLoginPage === false) {
+        location.href = "/login/LoginPage";
+      }
       return;
     }
     try {
@@ -63,8 +65,9 @@ export const ElseUtils = {
       }
       return userJson;
     } catch (err) {
-      localStorage.removeItem("managerinfomation");
-      location.href = "/login/LoginPage";
+      if (isLoginPage === false) {
+        location.href = "/login/LoginPage";
+      }
       return;
     }
   },
