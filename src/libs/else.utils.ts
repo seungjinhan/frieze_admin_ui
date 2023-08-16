@@ -52,19 +52,19 @@ export const ElseUtils = {
   checkLoginUserAndGetUser: (isNotMove = false) => {
     const user = localStorage.getItem("managerinfomation");
     if (user === undefined || user === null) {
-      location.href = "login/LoginPage";
+      location.href = "/login/LoginPage";
       return;
     }
     try {
       const userJson = JSON.parse(SecurityUtils.decryptText(user));
       if (isNotMove === false) {
-        location.href = "main/users/UserManagePage";
+        location.href = "/main/users/UserManagePage";
         return;
       }
       return userJson;
     } catch (err) {
       localStorage.removeItem("managerinfomation");
-      location.href = "login/LoginPage";
+      location.href = "/login/LoginPage";
       return;
     }
   },
