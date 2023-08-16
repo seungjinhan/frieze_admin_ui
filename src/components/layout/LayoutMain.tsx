@@ -38,10 +38,8 @@ const LayoutMain = ({
         ) : (
           <>
             <div className='flex flex-col h-full'>
-              <div className='bg-zinc-300 h-[181px]'>
-                <div className='mt-[40px]'></div>
+              <div className='bg-zinc-300 h-[60px]'>
                 <Logo />
-                <div className='mt-[44px]'></div>
               </div>
               <div className='flex h-screen bg-[#EBEBEB]'>
                 <div className='w-[320px] h-full bg-[#FFFFFF]'>

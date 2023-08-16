@@ -6,6 +6,7 @@ import { ListModel, UserModel } from "./UserManagePage";
 import axios from "axios";
 import { OrderModel } from "../orders/OrderManagePage";
 import getConfig from "next/config";
+import Title from "@/components/title/Title";
 const { publicRuntimeConfig } = getConfig();
 
 export default function UserManageDetailPage() {
@@ -53,7 +54,7 @@ export default function UserManageDetailPage() {
 
   const label = (txt: string) => {
     return (
-      <td className='pl-[40px] w-[210px] bg-[#F9F9F9] text-black text-[17px] border-[1px] border-[#D7D7D7]'>
+      <td className='pl-[40px] w-[210px] bg-[#F9F9F9] text-black text-[16px] border-[1px] border-[#D7D7D7]'>
         <div className='text-base font-bold leading-9 text-black'>{txt}</div>
       </td>
     );
@@ -61,8 +62,8 @@ export default function UserManageDetailPage() {
 
   const value = (txt: string) => {
     return (
-      <td className='pl-[56px] w-[500px] bg-white text-[#8C8C8C] text-[20px] border-[1px] border-[#D7D7D7]'>
-        <div className='text-xl font-medium leading-loose text-neutral-400'>
+      <td className='pl-[56px] w-[500px] bg-white text-[#8C8C8C] text-[16px] border-[1px] border-[#D7D7D7]'>
+        <div className='text-[16px] font-medium leading-loose text-neutral-400'>
           {txt}
         </div>
       </td>
@@ -73,8 +74,8 @@ export default function UserManageDetailPage() {
       <LayoutMain menuTitle='메인화면' setManager={setManager}>
         <div className='pl-[40px] bg-[#EBEBEB]'>
           <div className=''>
-            <div className='flex items-center mt-[40px]'>
-              <div className='text-2xl font-normal leading-9 text-black'>
+            <div className='flex items-center mt-[16px]'>
+              <div className='text-[16px] font-normal leading-9 text-black'>
                 고객 관리
               </div>
               <div className='w-6 h-6 mx-[10px]'>
@@ -93,7 +94,7 @@ export default function UserManageDetailPage() {
                   />
                 </svg>
               </div>
-              <div className='text-2xl font-normal leading-9 text-black'>
+              <div className='text-[16px] font-normal leading-9 text-black'>
                 <Link href={"/main/users/UserManagePage"}>전체 고객 관리</Link>
               </div>
               <div className='w-6 h-6 mx-[10px]'>
@@ -112,7 +113,7 @@ export default function UserManageDetailPage() {
                   />
                 </svg>
               </div>
-              <div className='text-2xl font-semibold leading-9 text-sky-500'>
+              <div className='text-[16px] font-semibold leading-9 text-sky-500'>
                 고객 상세 정보
               </div>
             </div>
@@ -133,11 +134,10 @@ export default function UserManageDetailPage() {
               </svg>
             </div>
           </div>
-          <div className='text-black text-4xl font-bold leading-[38px] pt-[40px]'>
-            고객 상세 정보
-          </div>
 
-          <div className='pt-[40px]'>
+          <Title title='고객 상세 정보' />
+
+          <div className='pt-[8px]'>
             <div className='text-2xl font-normal leading-9 text-black'>
               고객정보
             </div>

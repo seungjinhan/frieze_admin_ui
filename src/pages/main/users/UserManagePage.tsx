@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import getConfig from "next/config";
 import { ElseUtils } from "@/libs/else.utils";
+import Title from "@/components/title/Title";
 const { publicRuntimeConfig } = getConfig();
 
 export interface ListModel<T> {
@@ -60,8 +61,8 @@ export default function UserManagePage() {
       <LayoutMain menuTitle='메인화면' setManager={setManager}>
         <div className='pl-[40px] w-full'>
           <div className=''>
-            <div className='flex items-center mt-[40px]'>
-              <div className='text-2xl font-normal leading-9 text-black'>
+            <div className='flex items-center mt-[16px]'>
+              <div className='text-[16px] font-normal leading-9 text-black'>
                 고객 관리
               </div>
               <div className='w-6 h-6'>
@@ -80,7 +81,7 @@ export default function UserManagePage() {
                   />
                 </svg>
               </div>
-              <div className='text-2xl font-semibold leading-9 text-sky-500'>
+              <div className='text-[16px] font-semibold leading-9 text-sky-500'>
                 전체 고객 관리
               </div>
             </div>
@@ -102,10 +103,9 @@ export default function UserManagePage() {
             </div>
           </div>
 
-          <div className='text-black text-4xl font-bold leading-[38px] pt-[40px]'>
-            전체 고객 관리
-          </div>
-          <div className='pt-[80px]'>
+          <Title title='전체 고객 관리' />
+
+          <div className='pt-[16px]'>
             <span className='text-2xl font-medium leading-9 text-black'>
               목록 (총{" "}
             </span>
@@ -116,10 +116,10 @@ export default function UserManagePage() {
               명)
             </span>
           </div>
-          <div className='pt-[40px]'>
-            <div className=''>
-              <table className='text-sm text-left text-gray-500 dark:text-gray-400'>
-                <thead className='h-full text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+          <div className='pt-[8px]'>
+            <div className='overflow-auto'>
+              <table className='text-[16px] text-left text-gray-500 dark:text-gray-400'>
+                <thead className='h-full text-[16px] text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                   <tr>
                     <th scope='col' className='px-6 py-3 w-[210px]'>
                       <div className='text-base font-bold leading-9 text-black'>
@@ -163,33 +163,33 @@ export default function UserManagePage() {
                         scope='row'
                         className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'
                       >
-                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                        <div className='text-[16px] font-medium leading-loose text-neutral-400'>
                           {d.id}
                         </div>
                       </th>
                       <td className='px-6 py-4'>
-                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                        <div className='text-[16px] font-medium leading-loose text-neutral-400'>
                           {d.name}
                         </div>
                       </td>
                       <td className='px-6 py-4'>
-                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                        <div className='text-[16px] font-medium leading-loose text-neutral-400'>
                           {d.email}
                         </div>
                       </td>
                       <td className='px-6 py-4'>
-                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                        <div className='text-[16px] font-medium leading-loose text-neutral-400'>
                           +{d.phone}
                         </div>
                       </td>
                       <td className='px-6 py-4'>
-                        <div className='text-xl font-medium leading-loose text-neutral-400'>
+                        <div className='text-[16px] font-medium leading-loose text-neutral-400'>
                           {ElseUtils.changeDate(d.created)}
                         </div>
                       </td>
                       <td className='px-6 py-4'>
                         <div
-                          className='inline-flex items-center justify-center py-3 border rounded w-[149px] h-[56px] px-9 border-zinc-300'
+                          className='inline-flex items-center justify-center py-3 border rounded w-[139px] h-[46px] px-9 border-zinc-300'
                           onClick={(e) => {
                             localStorage.setItem(
                               "userDetail",
@@ -198,7 +198,7 @@ export default function UserManagePage() {
                           }}
                         >
                           <Link href={"/main/users/UserManageDetailPage"}>
-                            <div className='text-[20px] font-medium leading-loose text-neutral-400'>
+                            <div className='text-[16px] font-medium leading-loose text-neutral-400'>
                               상세 정보
                             </div>
                           </Link>

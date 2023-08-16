@@ -9,6 +9,7 @@ import axios from "axios";
 import getConfig from "next/config";
 import { ElseUtils } from "@/libs/else.utils";
 import moment from "moment";
+import Title from "@/components/title/Title";
 const { publicRuntimeConfig } = getConfig();
 
 export interface OrderModel {
@@ -147,7 +148,7 @@ export default function OrderManagePage() {
       <>
         {checkCBList[index] ? (
           <th scope='col' className={`px-6 py-3 w-[${width}px]`}>
-            <div className='text-base font-bold leading-9 text-black'>
+            <div className='text-[16px] font-bold leading-9 text-black'>
               {title}
             </div>
           </th>
@@ -164,7 +165,7 @@ export default function OrderManagePage() {
         {checkCBList[index] ? (
           <td className='px-6 py-4'>
             <div
-              className='text-xl font-medium leading-loose text-neutral-400'
+              className='text-[16px] font-medium leading-loose text-neutral-400'
               data-tooltip-target='tooltip-light'
               data-tooltip-style='light'
             >
@@ -175,7 +176,7 @@ export default function OrderManagePage() {
                     localStorage.setItem("orderuserinfo", JSON.stringify(d));
                   }}
                 >
-                  <button className='w-[149px] h-[59px] font-normal bg-[#0085FE] text-white rounded-lg'>
+                  <button className='w-[119px] h-[49px] font-normal bg-[#0085FE] text-white rounded-lg'>
                     {title}
                   </button>
                 </Link>
@@ -240,8 +241,8 @@ export default function OrderManagePage() {
       <LayoutMain menuTitle='메인화면' setManager={setManager}>
         <div className='pl-[40px] w-full'>
           <div className=''>
-            <div className='flex items-center mt-[40px]'>
-              <div className='text-2xl font-normal leading-9 text-black'>
+            <div className='flex items-center mt-[16px]'>
+              <div className='text-[16px] font-normal leading-9 text-black'>
                 상품 관리
               </div>
               <div className='w-6 h-6'>
@@ -260,7 +261,7 @@ export default function OrderManagePage() {
                   />
                 </svg>
               </div>
-              <div className='text-2xl font-semibold leading-9 text-sky-500'>
+              <div className='text-[16px] font-semibold leading-9 text-sky-500'>
                 {title}
               </div>
             </div>
@@ -282,10 +283,8 @@ export default function OrderManagePage() {
             </div>
           </div>
 
-          <div className='text-black text-4xl font-bold leading-[38px] pt-[40px]'>
-            {title}
-          </div>
-          <div className='pt-[80px] w-[1420px] '>
+          <Title title={title} />
+          <div className='pt-[16px] w-[1420px] '>
             <div className='flex flex-col '>
               <div className='flex'>
                 {headLabel("기간")}
@@ -412,7 +411,7 @@ export default function OrderManagePage() {
               </div>
             </div>
           </div>
-          <div className='pt-[80px]'>
+          <div className='pt-[16px]'>
             <span className='text-2xl font-medium leading-9 text-black'>
               목록 (총{" "}
             </span>
@@ -423,10 +422,10 @@ export default function OrderManagePage() {
               명)
             </span>
           </div>
-          <div className='pt-[40px]'>
-            <div className=''>
-              <table className='text-sm text-left text-gray-500 dark:text-gray-400'>
-                <thead className='h-full text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+          <div className='pt-[8px]'>
+            <div className='overflow-auto'>
+              <table className='text-[16px]] text-left text-gray-500 dark:text-gray-400'>
+                <thead className='h-full text-[16px] text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                   <tr>
                     {tableTh("주문번호", 210, 1)}
                     {tableTh("고객명", 210, 2)}
