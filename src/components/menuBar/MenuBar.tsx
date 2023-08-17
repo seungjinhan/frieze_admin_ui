@@ -34,7 +34,7 @@ export default function MenuBar() {
           data.endsWith("OrderManageDetailPage") ? (
             <div className='text-sky-500'>전체상품 리스트</div>
           ) : (
-            <Link href={"/main/orders/OrderManagePage?status=all"}>
+            <Link href={"/main/orders/OrderManagePage?status=ALL"}>
               전체상품 리스트
             </Link>
           )}
@@ -44,7 +44,7 @@ export default function MenuBar() {
           {data.endsWith("OrderManagePage?status=payment") ? (
             <div className='text-sky-500'>결제완료 리스트</div>
           ) : (
-            <Link href={"/main/orders/OrderManagePage?status=payment"}>
+            <Link href={"/main/orders/OrderManagePage?status=PAYMENT"}>
               결제완료 리스트
             </Link>
           )}
@@ -54,7 +54,7 @@ export default function MenuBar() {
           {data.endsWith("OrderManagePage?status=done") ? (
             <div className='text-sky-500'>이용완료 리스트</div>
           ) : (
-            <Link href={"/main/orders/OrderManagePage?status=done"}>
+            <Link href={"/main/orders/OrderManagePage?status=DONE"}>
               이용완료 리스트
             </Link>
           )}
@@ -64,7 +64,7 @@ export default function MenuBar() {
           {data.endsWith("OrderManagePage?status=cancel") ? (
             <div className='text-sky-500'>이용취소 리스트</div>
           ) : (
-            <Link href={"/main/orders/OrderManagePage?status=cancel"}>
+            <Link href={"/main/orders/OrderManagePage?status=CANCEL"}>
               이용취소 리스트
             </Link>
           )}

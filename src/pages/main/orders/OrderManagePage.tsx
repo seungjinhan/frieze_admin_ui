@@ -37,10 +37,13 @@ export default function OrderManagePage() {
   const [endtDate, setEndDate] = useState(new Date());
   const [title, setTitle] = useState("");
   const [searchType, setSearchType] = useState(-1);
+  const [searchStatus, setSearchStatus] = useState("NONE");
   const [listFilter, setListFilter] = useState("ALL");
 
   const [listCount, setListCount] = useState(0);
   const [manager, setManager] = useState();
+
+  const router = useRouter();
 
   // 주무리스트
   const [order, setOrder] =
@@ -60,17 +63,15 @@ export default function OrderManagePage() {
     true,
     true,
   ]);
-  const router = useRouter();
 
   useEffect(() => {
+    if (searchStatus === "NONE") return;
     search(-1);
     searchRun();
-  }, [orderPagingInfo, setOrderPagingInfo]);
-
-  useEffect(() => {}, []);
+  }, [searchStatus, setSearchStatus]);
 
   const searchRun = () => {
-    const url = `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${orderPagingInfo.size}?type=${searchType}&s=${startDate}&g=${endtDate}`;
+    const url = `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${orderPagingInfo.size}?type=${searchType}&s=${startDate}&g=${endtDate}&status=${searchStatus}`;
     axios
       .get(url)
       .then((d) => {
@@ -98,12 +99,14 @@ export default function OrderManagePage() {
   useEffect(() => {
     if (router.isReady === false) return;
 
-    if (router.query.status) {
-      if (router.query.status === "payment") {
+    const status = router.query.status as string;
+    if (status) {
+      setSearchStatus(status);
+      if (status === "PAYMENT") {
         setTitle("결제완료 상품 관리");
-      } else if (router.query.status === "done") {
+      } else if (status === "DONE") {
         setTitle("이용완료 상품 관리");
-      } else if (router.query.status === "cancel") {
+      } else if (status === "CANCEL") {
         setTitle("이용취소 상품 관리");
       } else {
         setTitle("전체 상품 관리");
@@ -371,7 +374,7 @@ export default function OrderManagePage() {
                   </div>
                 </div>
               </div>
-              <div className='flex'>
+              {/* <div className='flex'>
                 {headLabel("이용 상태")}
                 <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
                   <select
@@ -388,7 +391,7 @@ export default function OrderManagePage() {
                     <option value='CANCEL'>이용취소</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
               <div className='flex'>
                 {headLabel("선택")}
                 <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
@@ -440,11 +443,11 @@ export default function OrderManagePage() {
                 </thead>
                 <tbody>
                   {order?.data.map((d, i) => {
-                    if (listFilter !== "ALL") {
-                      if (listFilter !== d.order.status) {
-                        return;
-                      }
-                    }
+                    // if (listFilter !== "ALL") {
+                    //   if (listFilter !== d.order.status) {
+                    //     return;
+                    //   }
+                    // }
                     return (
                       <tr
                         className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'
