@@ -51,21 +51,23 @@ export default function OrderManagePage() {
   const [orderPagingInfo, setOrderPagingInfo] = useState({ size: 10, page: 0 });
 
   const [checkCBList, setCheckCBList] = useState([
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
+    true, //1
+    true, //2
+    true, //3
+    true, //4
+    true, //5
+    true, //6
+    true, //7
+    true, //8
+    true, //9
+    true, //10
+    true, //11
+    true, //12
   ]);
 
   useEffect(() => {
     if (searchStatus === "NONE") return;
+
     search(-1);
     searchRun();
   }, [searchStatus, setSearchStatus]);
@@ -195,22 +197,23 @@ export default function OrderManagePage() {
     );
   };
   const setInit = (isCheck: boolean) => {
-    for (let index = 0; index < 11; index++) {
+    for (let index = 0; index < 13; index++) {
       var cb = document.getElementById("cb" + index);
       (cb as HTMLInputElement).checked = isCheck;
     }
     setCheckCBList([
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
-      isCheck,
+      isCheck, //1
+      isCheck, //2
+      isCheck, //3
+      isCheck, //4
+      isCheck, //5
+      isCheck, //6
+      isCheck, //7
+      isCheck, //8
+      isCheck, //9
+      isCheck, //10
+      isCheck, //11
+      isCheck, //12
     ]);
   };
   const checkView = (order: number, isCheck: boolean) => {
@@ -222,7 +225,7 @@ export default function OrderManagePage() {
     setCheckCBList([...checkCBList, (checkCBList[order] = isCheck)]);
 
     let allCheck = true;
-    for (let index = 1; index < 9; index++) {
+    for (let index = 1; index < 12; index++) {
       var cb = document.getElementById(`cb${index}`);
       if ((cb as HTMLInputElement).checked === false) {
         allCheck = false;
@@ -406,8 +409,9 @@ export default function OrderManagePage() {
                       <div className=''>{cbBox(6, "이메일")}</div>
                       <div className=''>{cbBox(7, "전화번호")}</div>
                       <div className=''>{cbBox(8, "결제금액")}</div>
-                      <div className=''>{cbBox(9, "결제금액")}</div>
-                      <div className=''>{cbBox(10, "결제승인일자")}</div>
+                      <div className=''>{cbBox(9, "결제승인일자")}</div>
+                      <div className=''>{cbBox(10, "취소일자")}</div>
+                      <div className=''>{cbBox(11, "이용완료일자")}</div>
                     </div>
                   </div>
                 </div>
@@ -439,6 +443,8 @@ export default function OrderManagePage() {
                     {tableTh("전화번호", 210, 7)}
                     {tableTh("결제금액", 210, 8)}
                     {tableTh("결제승인일자", 210, 9)}
+                    {tableTh("취소일자", 210, 10)}
+                    {tableTh("이용완료일자", 210, 11)}
                   </tr>
                 </thead>
                 <tbody>
@@ -470,6 +476,8 @@ export default function OrderManagePage() {
                           d
                         )}
                         {tableTd(d.order.paymentDate, 9, d)}
+                        {tableTd(d.order.canceltDate, 10, d)}
+                        {tableTd(d.order.doneDate, 11, d)}
                       </tr>
                     );
                   })}

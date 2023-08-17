@@ -6,6 +6,7 @@ import { OrderModel } from "./OrderManagePage";
 import axios from "axios";
 import getConfig from "next/config";
 import { ElseUtils } from "@/libs/else.utils";
+import { useRouter } from "next/router";
 const { publicRuntimeConfig } = getConfig();
 export interface ManagerModel {
   id: string;
@@ -28,14 +29,22 @@ export default function UserManageDetailPage() {
     resaon: "",
   });
   const [isShowModal, setIsShowModal] = useState(false);
+
+  const searchOrderWithUser = (orderId: string) => {
+    axios
+      .get(`${publicRuntimeConfig.APISERVER}/order/orderWithUser/${orderId}`)
+      .then((d) => {
+        setData(d.data.data);
+      })
+      .catch((e) => {});
+  };
   useEffect(() => {
     const orderUser = localStorage.getItem("orderuserinfo");
     if (orderUser === undefined || orderUser === null) {
       return;
     }
-
     const orderUserJson = JSON.parse(orderUser);
-    setData(orderUserJson);
+    searchOrderWithUser(orderUserJson.order.id);
   }, []);
 
   useEffect(() => {
@@ -50,8 +59,8 @@ export default function UserManageDetailPage() {
         ...cancelInfo,
       })
       .then((d) => {
-        alert("취소성공");
         setIsShowModal(false);
+        searchOrderWithUser(data!.order.id);
       })
       .catch((e) => {
         alert(e.response.data.data.description.codeMessage);
@@ -147,15 +156,10 @@ export default function UserManageDetailPage() {
           </div>
           <div className='text-black text-4xl font-bold leading-[38px] pt-[40px]'>
             {data?.order.status} 상세정보
-            {data.order.status === "CANCEL" ? (
-              <> [취소시간 : {data.order.canceltDate}]</>
-            ) : (
-              <>[완료시간 : {data.order.doneDate}]</>
-            )}
           </div>
           <div className='flex w-[1406px]'>
             <div className='flex flex-col text-black text-[24px] mt-[40px] font-normal '>
-              <div className='flex '>
+              <div className='flex'>
                 <div className='pr-[5px]'>마지막 수정자 :</div>
                 <div className='font-bold pl-[5px]'>{manager?.name}</div>
               </div>
@@ -164,6 +168,18 @@ export default function UserManageDetailPage() {
                 <div className='font-bold pl-[0px] w-[220px]'>
                   {ElseUtils.changeDate(data.order.created.toString())}
                 </div>
+              </div>
+              <div className='flex mt-[5px]'>
+                {data.order.status === "CANCEL" ? (
+                  <>
+                    <div className='pr-[5px] w-[100px]'>취소시간 :</div>
+                    <div className='font-bold pl-[0px] w-[220px]'>
+                      {data.order.canceltDate}
+                    </div>
+                  </>
+                ) : (
+                  <>완료시간 : {data.order.doneDate}</>
+                )}
               </div>
             </div>
             {data.order.status === "CANCEL" || data.order.status === "DONE" ? (
@@ -178,9 +194,13 @@ export default function UserManageDetailPage() {
                 >
                   취소처리
                 </button>
-                <button className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg ml-[27px] text-[24px] text-black'>
-                  수정
-                </button>
+                {data.order.status === "PAYMENT" ? (
+                  ""
+                ) : (
+                  <button className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg ml-[27px] text-[24px] text-black'>
+                    수정
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -220,7 +240,7 @@ export default function UserManageDetailPage() {
                 </tr>
                 <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
                   {label("결제 승인일자")}
-                  {value(ElseUtils.changeDate(data!.order.approvalDate))}
+                  {value(data!.order.approvalDate)}
                   {label("이용 상태")}
                   {value(data!.order.status)}
                 </tr>
