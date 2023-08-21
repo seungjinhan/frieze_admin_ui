@@ -38,7 +38,8 @@ export default function OrderManagePage() {
   const [title, setTitle] = useState("");
   const [searchType, setSearchType] = useState(-1);
   const [searchStatus, setSearchStatus] = useState("NONE");
-  const [listFilter, setListFilter] = useState("ALL");
+
+  const [email, setEmail] = useState("");
 
   const [listCount, setListCount] = useState(0);
   const [manager, setManager] = useState();
@@ -73,7 +74,7 @@ export default function OrderManagePage() {
   }, [searchStatus, setSearchStatus]);
 
   const searchRun = () => {
-    const url = `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${orderPagingInfo.size}?type=${searchType}&s=${startDate}&g=${endtDate}&status=${searchStatus}`;
+    const url = `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${orderPagingInfo.size}?type=${searchType}&s=${startDate}&g=${endtDate}&status=${searchStatus}&email=${email}`;
     axios
       .get(url)
       .then((d) => {
@@ -120,7 +121,7 @@ export default function OrderManagePage() {
 
   const headLabel = (txt: string) => {
     return (
-      <div className='border-[1px] border-[#D7D7D7] w-[210px] h-[74px] text-black text-[17px] bg-[#F9F9F9] flex items-center pl-[40px] font-normal'>
+      <div className='border-[1px] border-[#D7D7D7] w-[110px] h-[74px] text-black text-[17px] bg-[#F9F9F9]  font-normal flex justify-center items-center'>
         {txt}
       </div>
     );
@@ -290,30 +291,30 @@ export default function OrderManagePage() {
           </div>
 
           <Title title={title} />
-          <div className='pt-[16px] w-[1420px] '>
+          <div className='pt-[16px] w-[1520px] '>
             <div className='flex flex-col '>
               <div className='flex'>
-                {headLabel("기간")}
+                {headLabel("검색조건")}
                 <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
                   <div className='flex items-center'>
                     <DatePicker
                       disabled={searchType === -1 ? true : false}
                       className={
                         searchType === -1
-                          ? "bg-gray-500  rounded-md"
-                          : `border-[#D9D9D9] rounded-md`
+                          ? "bg-gray-500  rounded-md w-[130px]"
+                          : `border-[#D9D9D9] rounded-md  w-[130px]`
                       }
                       dateFormat='yyyy-MM-dd'
                       selected={startDate}
                       onChange={(date: any) => setStartDate(date)}
                     />
-                    <div className='px-[18px]'>~</div>
+                    <div className='px-[10px]'>~</div>
                     <DatePicker
                       disabled={searchType === -1 ? true : false}
                       className={
                         searchType === -1
-                          ? "bg-gray-500  rounded-md"
-                          : `border-[#D9D9D9] rounded-md`
+                          ? "bg-gray-500  rounded-md  w-[130px]"
+                          : `border-[#D9D9D9] rounded-md  w-[130px]`
                       }
                       dateFormat='yyyy-MM-dd'
                       selected={endtDate}
@@ -322,8 +323,8 @@ export default function OrderManagePage() {
                     <button
                       className={
                         searchType === 0
-                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
-                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[16px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[16px] flex justify-center items-center`
                       }
                       onClick={(e) => {
                         search(0);
@@ -334,8 +335,8 @@ export default function OrderManagePage() {
                     <button
                       className={
                         searchType === 3
-                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
-                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[16px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[16px] flex justify-center items-center`
                       }
                       onClick={(e) => {
                         search(3);
@@ -346,8 +347,8 @@ export default function OrderManagePage() {
                     <button
                       className={
                         searchType === 7
-                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
-                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[16px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[16px] flex justify-center items-center`
                       }
                       onClick={(e) => {
                         search(7);
@@ -358,8 +359,8 @@ export default function OrderManagePage() {
                     <button
                       className={
                         searchType === -1
-                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center`
-                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[26px] flex justify-center items-center`
+                          ? `border-[#0085FE] bg-[#0085FE] rounded-md w-20 border h-11 text-[17px] text-white ml-[16px] flex justify-center items-center`
+                          : `border-[#D9D9D9] rounded-md w-20 border h-11 text-[17px] text-[#8C8C8C] ml-[16px] flex justify-center items-center`
                       }
                       onClick={(e) => {
                         search(-1);
@@ -367,7 +368,14 @@ export default function OrderManagePage() {
                     >
                       전체
                     </button>
-
+                    <div className='ml-[10px] h-[50px] w-[2px] bg-slate-700'></div>
+                    <input
+                      className='text-xl font-normal placeholder-slate-300 text-zinc-400 focus:outline-none ring-0 p-4 bg-white border rounded w-[324px] h-[46px] pr-14 border-zinc-400 ml-[10px]'
+                      placeholder='이메일'
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                      }}
+                    />
                     <button
                       className='border-[#0085FE] bg-[#0f1c29] rounded-md w-44 border h-11 text-[17px] text-white ml-[26px] flex justify-center items-center'
                       onClick={searchRun}
@@ -378,8 +386,9 @@ export default function OrderManagePage() {
                 </div>
               </div>
               {/* <div className='flex'>
-                {headLabel("이용 상태")}
+                {headLabel("이메일")}
                 <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
+                  
                   <select
                     id='countries'
                     className='text-sm text-gray-900 text-[17px] border border-gray-300 bg-gray-50 w-[182px] h-[56px] rounded-md'
@@ -397,7 +406,7 @@ export default function OrderManagePage() {
               </div> */}
               <div className='flex'>
                 {headLabel("선택")}
-                <div className=' w-full h-[74px] text-black text-[17px] bg-white flex items-center pl-[40px] font-normal'>
+                <div className=' w-full h-[74px] text-black text-[10px] bg-white flex items-center pl-[40px] font-normal'>
                   <div className='flex'>
                     <div className='flex items-center mb-4'>
                       <div className=''>{cbBox(0, "전체")}</div>

@@ -42,7 +42,7 @@ const LayoutMain = ({
                 <Logo />
               </div>
               <div className='flex h-screen bg-[#EBEBEB]'>
-                <div className='w-[320px] h-full bg-[#FFFFFF]'>
+                <div className='w-[220px] h-full bg-[#FFFFFF]'>
                   <MenuBar />
                 </div>
                 <div className='w-full overflow-auto pb-[25px] mb-[20px]'>
