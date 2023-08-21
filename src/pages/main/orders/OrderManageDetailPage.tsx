@@ -68,6 +68,24 @@ export default function UserManageDetailPage() {
       });
   };
 
+  /**
+   * 완료처리
+   */
+  const runDone = () => {
+    axios
+      .post(`${publicRuntimeConfig.APISERVER}/order/payment/admin/done`, {
+        id: data!.order.id,
+      })
+      .then((d) => {
+        setIsShowModal(false);
+        searchOrderWithUser(data!.order.id);
+      })
+      .catch((e) => {
+        alert(e.response.data.data.description.codeMessage);
+        setIsShowModal(false);
+      });
+  };
+
   const label = (txt: string) => {
     return (
       <td className='pl-[40px] w-[210px] bg-[#F9F9F9] text-black text-[17px] border-[1px] border-[#D7D7D7]'>
@@ -182,6 +200,7 @@ export default function UserManageDetailPage() {
                 )}
               </div>
             </div>
+            {/* 취소/완료에 대해서는 어떤 기능 버튼이 필요 없음 */}
             {data.order.status === "CANCEL" || data.order.status === "DONE" ? (
               ""
             ) : (
@@ -193,6 +212,14 @@ export default function UserManageDetailPage() {
                   }}
                 >
                   취소처리
+                </button>
+                <button
+                  className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
+                  onClick={(e) => {
+                    runDone();
+                  }}
+                >
+                  완료처리
                 </button>
                 {data.order.status === "PAYMENT" ? (
                   ""
