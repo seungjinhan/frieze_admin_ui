@@ -300,7 +300,7 @@ export default function UserManageDetailPage() {
                   {label("이메일")}
                   {value(data!.user.email)}
                   {label("전화번호")}
-                  {value("+821000000000")}
+                  {value(`+${data!.user.phone}`)}
                 </tr>
               </table>
             </div>
