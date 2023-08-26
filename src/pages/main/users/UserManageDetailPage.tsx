@@ -16,12 +16,14 @@ export default function UserManageDetailPage() {
 
   // 주무리스트
   const [order, setOrder] = useState<ListModel<OrderModel>>();
-  const [orderPagingInfo, setOrderPagingInfo] = useState({ size: 10, page: 0 });
+  const [orderPagingInfo, setOrderPagingInfo] = useState({
+    size: 0,
+    page: 0,
+  });
 
   useEffect(() => {
     if (data === undefined) return;
 
-    console.log("DDD");
     axios
       .get(
         `${publicRuntimeConfig.APISERVER}/order/list/${orderPagingInfo.page}/${
@@ -29,7 +31,6 @@ export default function UserManageDetailPage() {
         }/${data!.id}`
       )
       .then((d) => {
-        console.log(d.data.data);
         if (d.data.ok === true) {
           setOrder(d.data.data);
         }
@@ -46,9 +47,8 @@ export default function UserManageDetailPage() {
     }
     const userJson = JSON.parse(user);
     setData(userJson);
-    console.log(userJson);
     setTimeout(() => {
-      setOrderPagingInfo({ size: 10, page: 0 });
+      setOrderPagingInfo({ size: 999999, page: 0 });
     }, 300);
   }, [router]);
 

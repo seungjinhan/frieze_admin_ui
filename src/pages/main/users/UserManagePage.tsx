@@ -37,11 +37,11 @@ export default function UserManagePage() {
     totalPage: 0,
     data: [],
   });
-  const [pagingInfo, setPagingInfo] = useState({ size: 10, page: 0 });
+  const [pagingInfo, setPagingInfo] = useState({ size: 9999, page: 0 });
 
-  useEffect(() => {
-    setPagingInfo({ size: 10, page: 0 });
-  }, []);
+  // useEffect(() => {
+  //   setPagingInfo({ size: 9999, page: 0 });
+  // }, []);
 
   useEffect(() => {
     axios
@@ -49,7 +49,6 @@ export default function UserManagePage() {
         `${publicRuntimeConfig.APISERVER}/c.user/list/${pagingInfo.page}/${pagingInfo.size}`
       )
       .then((d) => {
-        console.log(d.data.data);
         if (d.data.ok === true) {
           setData(d.data.data);
         }

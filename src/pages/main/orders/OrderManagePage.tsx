@@ -49,7 +49,10 @@ export default function OrderManagePage() {
   // 주무리스트
   const [order, setOrder] =
     useState<ListModel<{ order: OrderModel; user: UserModel }>>();
-  const [orderPagingInfo, setOrderPagingInfo] = useState({ size: 10, page: 0 });
+  const [orderPagingInfo, setOrderPagingInfo] = useState({
+    size: 999999,
+    page: 0,
+  });
 
   const [checkCBList, setCheckCBList] = useState([
     true, //1

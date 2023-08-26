@@ -47,10 +47,6 @@ export default function UserManageDetailPage() {
     searchOrderWithUser(orderUserJson.order.id);
   }, []);
 
-  useEffect(() => {
-    console.log(manager);
-  }, [manager]);
-
   const runCancel = () => {
     axios
       .post(`${publicRuntimeConfig.APISERVER}/order/payment/admin/cancel`, {
