@@ -67,6 +67,7 @@ export default function OrderManagePage() {
     true, //10
     true, //11
     true, //12
+    true, //13
   ]);
 
   useEffect(() => {
@@ -118,7 +119,7 @@ export default function OrderManagePage() {
         setTitle("전체 상품 관리");
       }
     } else {
-      location.href = "/main/orders/OrderManagePage?status=all";
+      location.href = "/main/orders/OrderManagePage?status=ALL";
     }
   }, [router]);
 
@@ -201,7 +202,7 @@ export default function OrderManagePage() {
     );
   };
   const setInit = (isCheck: boolean) => {
-    for (let index = 0; index < 13; index++) {
+    for (let index = 0; index < 14; index++) {
       var cb = document.getElementById("cb" + index);
       (cb as HTMLInputElement).checked = isCheck;
     }
@@ -218,6 +219,7 @@ export default function OrderManagePage() {
       isCheck, //10
       isCheck, //11
       isCheck, //12
+      isCheck, //13
     ]);
   };
   const checkView = (order: number, isCheck: boolean) => {
@@ -422,8 +424,9 @@ export default function OrderManagePage() {
                       <div className=''>{cbBox(7, "전화번호")}</div>
                       <div className=''>{cbBox(8, "결제금액")}</div>
                       <div className=''>{cbBox(9, "결제승인일자")}</div>
-                      <div className=''>{cbBox(10, "취소일자")}</div>
-                      <div className=''>{cbBox(11, "이용완료일자")}</div>
+                      <div className=''>{cbBox(10, "배차완료일자")}</div>
+                      <div className=''>{cbBox(11, "취소일자")}</div>
+                      <div className=''>{cbBox(12, "이용완료일자")}</div>
                     </div>
                   </div>
                 </div>
@@ -455,8 +458,9 @@ export default function OrderManagePage() {
                     {tableTh("전화번호", 210, 7)}
                     {tableTh("결제금액", 210, 8)}
                     {tableTh("결제승인일자", 210, 9)}
-                    {tableTh("취소일자", 210, 10)}
-                    {tableTh("이용완료일자", 210, 11)}
+                    {tableTh("배차완료일자", 210, 10)}
+                    {tableTh("취소일자", 210, 11)}
+                    {tableTh("이용완료일자", 210, 12)}
                   </tr>
                 </thead>
                 <tbody>
@@ -488,8 +492,9 @@ export default function OrderManagePage() {
                           d
                         )}
                         {tableTd(d.order.paymentDate, 9, d)}
-                        {tableTd(d.order.canceltDate, 10, d)}
-                        {tableTd(d.order.doneDate, 11, d)}
+                        {tableTd(d.order.dispatchDate, 10, d)}
+                        {tableTd(d.order.canceltDate, 11, d)}
+                        {tableTd(d.order.doneDate, 12, d)}
                       </tr>
                     );
                   })}

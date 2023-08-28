@@ -30,7 +30,7 @@ export default function MenuBar() {
       </div>
       <div className='bg-white flex flex-col pl-[20px] py-[10px] text-stone-500 text-[14px] font-semibold leading-9'>
         <div className=''>
-          {data.endsWith("OrderManagePage?status=all") ||
+          {data.endsWith("OrderManagePage?") ||
           data.endsWith("OrderManageDetailPage") ? (
             <div className='text-sky-500'>전체상품 리스트</div>
           ) : (

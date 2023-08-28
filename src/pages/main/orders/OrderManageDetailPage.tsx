@@ -64,6 +64,20 @@ export default function UserManageDetailPage() {
       });
   };
 
+  const runDispatch = () => {
+    axios
+      .post(`${publicRuntimeConfig.APISERVER}/order/payment/admin/dispatch`, {
+        id: data!.order.id,
+      })
+      .then((d) => {
+        setIsShowModal(false);
+        searchOrderWithUser(data!.order.id);
+      })
+      .catch((e) => {
+        alert(e.response.data.data.description.codeMessage);
+        setIsShowModal(false);
+      });
+  };
   /**
    * 완료처리
    */
@@ -178,21 +192,55 @@ export default function UserManageDetailPage() {
                 <div className='font-bold pl-[5px]'>{manager?.name}</div>
               </div>
               <div className='flex mt-[5px]'>
-                <div className='pr-[5px] w-[80px]'>등록일 :</div>
+                <div className='pr-[5px] w-[150px]'>결제일시 :</div>
                 <div className='font-bold pl-[0px] w-[220px]'>
-                  {ElseUtils.changeDate(data.order.created.toString())}
+                  {data.order.approvalDate}
                 </div>
               </div>
               <div className='flex mt-[5px]'>
                 {data.order.status === "CANCEL" ? (
                   <>
-                    <div className='pr-[5px] w-[100px]'>취소시간 :</div>
-                    <div className='font-bold pl-[0px] w-[220px]'>
-                      {data.order.canceltDate}
+                    <div className=''>
+                      <div className='flex'>
+                        <div className='pr-[5px] w-[150px]'>배차완료일시 :</div>
+                        <div className='font-bold pl-[0px] w-[220px]'>
+                          {data.order.dispatchDate}
+                        </div>
+                      </div>
+                      <div className='flex'>
+                        <div className='pr-[5px] w-[150px]'>취소일시 :</div>
+                        <div className='font-bold pl-[0px] w-[220px]'>
+                          {data.order.canceltDate}
+                        </div>
+                      </div>
                     </div>
                   </>
+                ) : data.order.status === "DISPATCH" ? (
+                  <>
+                    <div className='pr-[5px] w-[150px]'>배차완료일시 :</div>
+                    <div className='font-bold pl-[0px] w-[220px]'>
+                      {data.order.dispatchDate}
+                    </div>
+                  </>
+                ) : data.order.status === "PAYMENT" ? (
+                  ""
                 ) : (
-                  <>완료시간 : {data.order.doneDate}</>
+                  <>
+                    <div className=''>
+                      <div className='flex'>
+                        <div className='pr-[5px] w-[150px]'>배차완료일시 :</div>
+                        <div className='font-bold pl-[0px] w-[220px]'>
+                          {data.order.dispatchDate}
+                        </div>
+                      </div>
+                      <div className='flex'>
+                        <div className='pr-[5px] w-[150px]'>완료일시 :</div>
+                        <div className='font-bold pl-[0px] w-[220px]'>
+                          {data.order.doneDate}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -209,6 +257,19 @@ export default function UserManageDetailPage() {
                 >
                   취소처리
                 </button>
+                {data.order.status === "DISPATCH" ? (
+                  ""
+                ) : (
+                  <button
+                    className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
+                    onClick={(e) => {
+                      runDispatch();
+                    }}
+                  >
+                    배차완료처리
+                  </button>
+                )}
+
                 <button
                   className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
                   onClick={(e) => {
@@ -220,9 +281,10 @@ export default function UserManageDetailPage() {
                 {data.order.status === "PAYMENT" ? (
                   ""
                 ) : (
-                  <button className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg ml-[27px] text-[24px] text-black'>
-                    수정
-                  </button>
+                  <></>
+                  // <button className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg ml-[27px] text-[24px] text-black'>
+                  //   수정
+                  // </button>
                 )}
               </div>
             )}
