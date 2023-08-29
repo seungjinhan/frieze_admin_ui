@@ -29,6 +29,7 @@ export interface OrderModel {
   paymentDate: string;
   canceltDate: string;
   dispatchDate: string;
+  getonDate: string;
   doneDate: string;
 }
 
@@ -66,8 +67,6 @@ export default function OrderManagePage() {
     true, //9
     true, //10
     true, //11
-    true, //12
-    true, //13
   ]);
 
   useEffect(() => {
@@ -202,7 +201,7 @@ export default function OrderManagePage() {
     );
   };
   const setInit = (isCheck: boolean) => {
-    for (let index = 0; index < 14; index++) {
+    for (let index = 0; index < 12; index++) {
       var cb = document.getElementById("cb" + index);
       (cb as HTMLInputElement).checked = isCheck;
     }
@@ -218,8 +217,6 @@ export default function OrderManagePage() {
       isCheck, //9
       isCheck, //10
       isCheck, //11
-      isCheck, //12
-      isCheck, //13
     ]);
   };
   const checkView = (order: number, isCheck: boolean) => {
@@ -231,7 +228,7 @@ export default function OrderManagePage() {
     setCheckCBList([...checkCBList, (checkCBList[order] = isCheck)]);
 
     let allCheck = true;
-    for (let index = 1; index < 12; index++) {
+    for (let index = 1; index < 10; index++) {
       var cb = document.getElementById(`cb${index}`);
       if ((cb as HTMLInputElement).checked === false) {
         allCheck = false;
@@ -251,7 +248,7 @@ export default function OrderManagePage() {
   return (
     <>
       <LayoutMain menuTitle='메인화면' setManager={setManager}>
-        <div className='pl-[40px] w-full'>
+        <div className='pl-[40px] w-full pr-[10px]'>
           <div className=''>
             <div className='flex items-center mt-[16px]'>
               <div className='text-[16px] font-normal leading-9 text-black'>
@@ -424,9 +421,7 @@ export default function OrderManagePage() {
                       <div className=''>{cbBox(7, "전화번호")}</div>
                       <div className=''>{cbBox(8, "결제금액")}</div>
                       <div className=''>{cbBox(9, "결제승인일자")}</div>
-                      <div className=''>{cbBox(10, "배차완료일자")}</div>
-                      <div className=''>{cbBox(11, "취소일자")}</div>
-                      <div className=''>{cbBox(12, "이용완료일자")}</div>
+                      <div className=''>{cbBox(10, "주문상태")}</div>
                     </div>
                   </div>
                 </div>
@@ -458,9 +453,7 @@ export default function OrderManagePage() {
                     {tableTh("전화번호", 210, 7)}
                     {tableTh("결제금액", 210, 8)}
                     {tableTh("결제승인일자", 210, 9)}
-                    {tableTh("배차완료일자", 210, 10)}
-                    {tableTh("취소일자", 210, 11)}
-                    {tableTh("이용완료일자", 210, 12)}
+                    {tableTh("주문상태", 210, 10)}
                   </tr>
                 </thead>
                 <tbody>
@@ -492,9 +485,7 @@ export default function OrderManagePage() {
                           d
                         )}
                         {tableTd(d.order.paymentDate, 9, d)}
-                        {tableTd(d.order.dispatchDate, 10, d)}
-                        {tableTd(d.order.canceltDate, 11, d)}
-                        {tableTd(d.order.doneDate, 12, d)}
+                        {tableTd(d.order.status, 10, d)}
                       </tr>
                     );
                   })}

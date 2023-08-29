@@ -70,14 +70,31 @@ export default function UserManageDetailPage() {
         id: data!.order.id,
       })
       .then((d) => {
-        setIsShowModal(false);
+        alert("배차완료처리");
         searchOrderWithUser(data!.order.id);
       })
       .catch((e) => {
         alert(e.response.data.data.description.codeMessage);
-        setIsShowModal(false);
       });
   };
+
+  /**
+   * 탑승완료
+   */
+  const rurGeton = () => {
+    axios
+      .post(`${publicRuntimeConfig.APISERVER}/order/payment/admin/geton`, {
+        id: data!.order.id,
+      })
+      .then((d) => {
+        alert("탑승완료처리");
+        searchOrderWithUser(data!.order.id);
+      })
+      .catch((e) => {
+        alert(e.response.data.data.description.codeMessage);
+      });
+  };
+
   /**
    * 완료처리
    */
@@ -87,12 +104,11 @@ export default function UserManageDetailPage() {
         id: data!.order.id,
       })
       .then((d) => {
-        setIsShowModal(false);
+        alert("하차완료처리");
         searchOrderWithUser(data!.order.id);
       })
       .catch((e) => {
         alert(e.response.data.data.description.codeMessage);
-        setIsShowModal(false);
       });
   };
 
@@ -197,7 +213,7 @@ export default function UserManageDetailPage() {
                   {data.order.approvalDate}
                 </div>
               </div>
-              <div className='flex mt-[5px]'>
+              {/* <div className='flex mt-[5px]'>
                 {data.order.status === "CANCEL" ? (
                   <>
                     <div className=''>
@@ -222,9 +238,7 @@ export default function UserManageDetailPage() {
                       {data.order.dispatchDate}
                     </div>
                   </>
-                ) : data.order.status === "PAYMENT" ? (
-                  ""
-                ) : (
+                ) : data.order.status === "PAYMENT"?"":(
                   <>
                     <div className=''>
                       <div className='flex'>
@@ -242,52 +256,45 @@ export default function UserManageDetailPage() {
                     </div>
                   </>
                 )}
-              </div>
+              </div> */}
             </div>
             {/* 취소/완료에 대해서는 어떤 기능 버튼이 필요 없음 */}
-            {data.order.status === "CANCEL" || data.order.status === "DONE" ? (
-              ""
-            ) : (
-              <div className='flex items-end justify-end w-full'>
-                <button
-                  className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg text-[24px] text-black'
-                  onClick={(e) => {
-                    setIsShowModal(true);
-                  }}
-                >
-                  취소처리
-                </button>
-                {data.order.status === "DISPATCH" ? (
-                  ""
-                ) : (
-                  <button
-                    className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
-                    onClick={(e) => {
-                      runDispatch();
-                    }}
-                  >
-                    배차완료처리
-                  </button>
-                )}
 
-                <button
-                  className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
-                  onClick={(e) => {
-                    runDone();
-                  }}
-                >
-                  완료처리
-                </button>
-                {data.order.status === "PAYMENT" ? (
-                  ""
-                ) : (
-                  <></>
-                  // <button className='bg-[#D9D9D9] w-[216px] h-[56px] rounded-lg ml-[27px] text-[24px] text-black'>
-                  //   수정
-                  // </button>
-                )}
-              </div>
-            )}
+            <div className='flex items-end justify-end w-full'>
+              <button
+                className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
+                onClick={(e) => {
+                  runDispatch();
+                }}
+              >
+                배차완료
+              </button>
+              <button
+                className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
+                onClick={(e) => {
+                  rurGeton();
+                }}
+              >
+                탑승완료
+              </button>
+              <button
+                className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
+                onClick={(e) => {
+                  runDone();
+                }}
+              >
+                하차완료
+              </button>
+
+              <button
+                className='bg-[#D9D9D9] w-[216px] ml-[10px] h-[56px] rounded-lg text-[24px] text-black'
+                onClick={(e) => {
+                  setIsShowModal(true);
+                }}
+              >
+                취소
+              </button>
+            </div>
           </div>
           <div className='mt-[40px]'>
             <svg
@@ -334,6 +341,18 @@ export default function UserManageDetailPage() {
                   {value(`USD ${JSON.parse(data!.order.priceInfo).lastPrice}`)}
                   {label("결제 수단")}
                   {value("NICEPAYMENTS")}
+                </tr>
+                <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                  {label("배차완료 일시")}
+                  {value(`${data!.order.dispatchDate}`)}
+                  {label("탑승완료 일시")}
+                  {value(`${data!.order.getonDate}`)}
+                </tr>
+                <tr className='h-[74px] border-[1px] border-[#D7D7D7]'>
+                  {label("하차완료 일시")}
+                  {value(`${data!.order.doneDate}`)}
+                  {label("취소완료 일시")}
+                  {value(`${data!.order.canceltDate}`)}
                 </tr>
               </table>
             </div>
